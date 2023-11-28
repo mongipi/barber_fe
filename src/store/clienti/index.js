@@ -8,17 +8,16 @@ const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
 // ** Fetch Users
 export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
   const response = await axios.get(`${backendURL}/clienti`)
-  console.log(response.data.totalItems)
 
   return response
 })
 
 // ** Add User
 // ** Add User
-export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispatch, getState }) => {
+export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispatch }) => {
   const response = await axios.post(`${backendURL}/clienti`, data)
 
-  dispatch(fetchData()) // Dispatch della fetchData dopo l'aggiunta di un nuovo utente
+  dispatch(fetchData())
 
   return response.data
 })
