@@ -7,20 +7,18 @@ const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 // ** Fetch Users
 export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
-  const response = await axios.get('/apps/users/list', {
-    params
-  })
+  const response = await axios.get(`${backendURL}/clienti`)
+  console.log(response.data.totalItems)
 
-  return response.data
+  return response
 })
 
 // ** Add User
-export const addUser = createAsyncThunk('appUsers/addUser', async data => {
-  console.log(data)
-
+// ** Add User
+export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispatch, getState }) => {
   const response = await axios.post(`${backendURL}/clienti`, data)
 
-  //dispatch(fetchData(getState().user.params))
+  dispatch(fetchData()) // Dispatch della fetchData dopo l'aggiunta di un nuovo utente
 
   return response.data
 })
@@ -46,8 +44,8 @@ export const appUsersSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload.users
-      state.total = action.payload.total
+      state.data = action.payload.data.data
+      state.total = action.payload.data.totalItems
       state.params = action.payload.params
       state.allData = action.payload.allData
     })

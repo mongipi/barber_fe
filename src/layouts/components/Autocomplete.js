@@ -346,7 +346,7 @@ const AutocompleteComponent = ({ hidden, settings }) => {
         params: { q: searchValue }
       })
       .then(response => {
-        if (response.data && response.data.length) {
+        if (response.data && response.totalItems) {
           setOptions(response.data)
         } else {
           setOptions([])

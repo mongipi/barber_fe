@@ -59,19 +59,19 @@ const userStatusObj = {
 
 // ** renders client column
 const renderClient = row => {
-  if (row.avatar.length) {
-    return <CustomAvatar src={row.avatar} sx={{ mr: 2.5, width: 38, height: 38 }} />
-  } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={row.avatarColor}
-        sx={{ mr: 2.5, width: 38, height: 38, fontWeight: 500, fontSize: theme => theme.typography.body1.fontSize }}
-      >
-        {getInitials(row.fullName ? row.fullName : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
+  // if (row.avatar.length) {
+  //   return <CustomAvatar src={row.avatar} sx={{ mr: 2.5, width: 38, height: 38 }} />
+  // } else {
+  //   return (
+  //     <CustomAvatar
+  //       skin='light'
+  //       color={row.avatarColor}
+  //       sx={{ mr: 2.5, width: 38, height: 38, fontWeight: 500, fontSize: theme => theme.typography.body1.fontSize }}
+  //     >
+  //       {getInitials(row.fullName ? row.fullName : 'John Doe')}
+  //     </CustomAvatar>
+  //   )
+  // }
 }
 
 const RowOptions = ({ id }) => {
@@ -137,7 +137,7 @@ const columns = [
     flex: 0.25,
     minWidth: 280,
     field: 'fullName',
-    headerName: 'User',
+    headerName: 'Cliente',
     renderCell: ({ row }) => {
       const { fullName, email } = row
 
@@ -156,10 +156,10 @@ const columns = [
                 '&:hover': { color: 'primary.main' }
               }}
             >
-              {fullName}
+              {row.nome}
             </Typography>
             <Typography noWrap variant='body2' sx={{ color: 'text.disabled' }}>
-              {email}
+              {row.cognome}
             </Typography>
           </Box>
         </Box>
@@ -170,19 +170,12 @@ const columns = [
     flex: 0.15,
     field: 'role',
     minWidth: 170,
-    headerName: 'Role',
+    headerName: 'Lavoro',
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <CustomAvatar
-            skin='light'
-            sx={{ mr: 4, width: 30, height: 30 }}
-            color={userRoleObj[row.role].color || 'primary'}
-          >
-            <Icon icon={userRoleObj[row.role].icon} />
-          </CustomAvatar>
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
+            {row.lavoro}
           </Typography>
         </Box>
       )
@@ -191,47 +184,17 @@ const columns = [
   {
     flex: 0.15,
     minWidth: 120,
-    headerName: 'Plan',
+    headerName: 'Numero',
     field: 'currentPlan',
     renderCell: ({ row }) => {
       return (
         <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.currentPlan}
+          {row.telefono}
         </Typography>
       )
     }
   },
-  {
-    flex: 0.15,
-    minWidth: 190,
-    field: 'billing',
-    headerName: 'Billing',
-    renderCell: ({ row }) => {
-      return (
-        <Typography noWrap sx={{ color: 'text.secondary' }}>
-          {row.billing}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
-    renderCell: ({ row }) => {
-      return (
-        <CustomChip
-          rounded
-          skin='light'
-          size='small'
-          label={row.status}
-          color={userStatusObj[row.status]}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      )
-    }
-  },
+
   {
     flex: 0.1,
     minWidth: 100,
@@ -244,8 +207,6 @@ const columns = [
 
 const UserList = ({ apiData }) => {
   // ** State
-  const [role, setRole] = useState('')
-  const [plan, setPlan] = useState('')
   const [value, setValue] = useState('')
   const [status, setStatus] = useState('')
   const [addUserOpen, setAddUserOpen] = useState(false)
@@ -257,29 +218,17 @@ const UserList = ({ apiData }) => {
   useEffect(() => {
     dispatch(
       fetchData({
-        role,
-        status,
-        q: value,
-        currentPlan: plan
+        q: value
       })
     )
-  }, [dispatch, plan, role, status, value])
+  }, [dispatch, value])
+  console.log('QUA')
+  console.log(store)
 
   const handleFilter = useCallback(val => {
     setValue(val)
   }, [])
 
-  const handleRoleChange = useCallback(e => {
-    setRole(e.target.value)
-  }, [])
-
-  const handlePlanChange = useCallback(e => {
-    setPlan(e.target.value)
-  }, [])
-
-  const handleStatusChange = useCallback(e => {
-    setStatus(e.target.value)
-  }, [])
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   return (
@@ -295,7 +244,6 @@ const UserList = ({ apiData }) => {
                   fullWidth
                   defaultValue='Select Role'
                   SelectProps={{
-                    value: role,
                     displayEmpty: true,
                     onChange: e => handleRoleChange(e)
                   }}
@@ -314,7 +262,6 @@ const UserList = ({ apiData }) => {
                   fullWidth
                   defaultValue='Select Plan'
                   SelectProps={{
-                    value: plan,
                     displayEmpty: true,
                     onChange: e => handlePlanChange(e)
                   }}
