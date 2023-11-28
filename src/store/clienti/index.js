@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // ** Axios Imports
 import axios from 'axios'
 
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+
 // ** Fetch Users
 export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
   const response = await axios.get('/apps/users/list', {
@@ -13,11 +15,12 @@ export const fetchData = createAsyncThunk('appUsers/fetchData', async params => 
 })
 
 // ** Add User
-export const addUser = createAsyncThunk('appUsers/addUser', async (data, { getState, dispatch }) => {
-  const response = await axios.post('/apps/users/add-user', {
-    data
-  })
-  dispatch(fetchData(getState().user.params))
+export const addUser = createAsyncThunk('appUsers/addUser', async data => {
+  console.log(data)
+
+  const response = await axios.post(`${backendURL}/clienti`, data)
+
+  //dispatch(fetchData(getState().user.params))
 
   return response.data
 })
