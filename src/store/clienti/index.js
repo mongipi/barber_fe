@@ -12,7 +12,20 @@ export const fetchData = createAsyncThunk('appUsers/fetchData', async params => 
   return response
 })
 
-// ** Add User
+// ** Fetch Cliente
+export const fetchCliente = createAsyncThunk('appUsers/fetchData', async clienteId => {
+  const response = await axios.get(`${backendURL}/clienti/${clienteId}`)
+
+  return response
+})
+
+// ** EditCliente
+export const editCliente = createAsyncThunk('appUsers/addUser', async data => {
+  const response = await axios.put(`${backendURL}/clienti/${data.clienteId}`, data.data)
+
+  return response.data
+})
+
 // ** Add User
 export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispatch }) => {
   const response = await axios.post(`${backendURL}/clienti`, data)

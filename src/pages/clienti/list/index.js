@@ -24,13 +24,7 @@ import Icon from 'src/@core/components/icon'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import CardStatsHorizontalWithDetails from 'src/@core/components/card-statistics/card-stats-horizontal-with-details'
-
-// ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
 import { fetchData, deleteUser } from 'src/store/clienti'
@@ -43,36 +37,7 @@ import TableHeader from 'src/views/clienti/list/TableHeader'
 import AddUserDrawer from 'src/views/clienti/list/AddUserDrawer'
 
 // ** renders client column
-const userRoleObj = {
-  admin: { icon: 'tabler:device-laptop', color: 'secondary' },
-  author: { icon: 'tabler:circle-check', color: 'success' },
-  editor: { icon: 'tabler:edit', color: 'info' },
-  maintainer: { icon: 'tabler:chart-pie-2', color: 'primary' },
-  subscriber: { icon: 'tabler:user', color: 'warning' }
-}
-
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
-}
-
-// ** renders client column
-const renderClient = row => {
-  // if (row.avatar.length) {
-  //   return <CustomAvatar src={row.avatar} sx={{ mr: 2.5, width: 38, height: 38 }} />
-  // } else {
-  //   return (
-  //     <CustomAvatar
-  //       skin='light'
-  //       color={row.avatarColor}
-  //       sx={{ mr: 2.5, width: 38, height: 38, fontWeight: 500, fontSize: theme => theme.typography.body1.fontSize }}
-  //     >
-  //       {getInitials(row.fullName ? row.fullName : 'John Doe')}
-  //     </CustomAvatar>
-  //   )
-  // }
-}
+const renderClient = row => {}
 
 const RowOptions = ({ id }) => {
   // ** Hooks
@@ -139,8 +104,6 @@ const columns = [
     field: 'fullName',
     headerName: 'Cliente',
     renderCell: ({ row }) => {
-      const { fullName, email } = row
-
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {renderClient(row)}
@@ -148,7 +111,7 @@ const columns = [
             <Typography
               noWrap
               component={Link}
-              href='/clienti/view/account'
+              href={`/clienti/view/account/${row.id}`}
               sx={{
                 fontWeight: 500,
                 textDecoration: 'none',
@@ -222,8 +185,6 @@ const UserList = ({ apiData }) => {
       })
     )
   }, [dispatch, value])
-  console.log('QUA')
-  console.log(store)
 
   const handleFilter = useCallback(val => {
     setValue(val)

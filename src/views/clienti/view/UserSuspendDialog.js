@@ -14,7 +14,8 @@ import Icon from 'src/@core/components/icon'
 
 const UserSuspendDialog = props => {
   // ** Props
-  const { open, setOpen } = props
+  const { open, setOpen, clienteId } = props
+  console.log(clienteId)
 
   // ** States
   const [userInput, setUserInput] = useState('yes')
