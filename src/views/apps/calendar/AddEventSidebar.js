@@ -11,6 +11,9 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
+
+import { fetchAllClienti } from 'src/store/clienti'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -55,6 +58,21 @@ const AddEventSidebar = props => {
 
   // ** States
   const [values, setValues] = useState(defaultState)
+
+  const [clientiOptions, setClientiOptions] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clientiData = await dispatch(fetchAllClienti({}))
+        setClientiOptions(clientiData.payload.data.data)
+      } catch (error) {
+        console.error('Errore durante il recupero dei clienti:', error.message)
+      }
+    }
+
+    fetchData()
+  }, [dispatch])
 
   const {
     control,
@@ -227,22 +245,32 @@ const AddEventSidebar = props => {
         <DatePickerWrapper>
           <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
             <Controller
-              name='title'
               control={control}
               rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <CustomTextField
-                  fullWidth
-                  label='Title'
-                  value={value}
+              name='title'
+              render={({ field: { value, onChange, onBlur } }) => (
+                <CustomAutocomplete
+                  name='title'
+                  label='Clienti'
                   sx={{ mb: 4 }}
-                  onChange={onChange}
-                  placeholder='Event Title'
-                  error={Boolean(errors.title)}
-                  {...(errors.title && { helperText: 'This field is required' })}
+                  options={clientiOptions}
+                  value={clientiOptions.find(option => option.id === value) || null}
+                  onChange={(e, newValue) => {
+                    onChange(newValue ? newValue.id : '')
+                  }}
+                  onBlur={onBlur}
+                  getOptionLabel={option => `${option.nome || ''} ${option.cognome || ''}`}
+                  renderInput={params => (
+                    <CustomTextField
+                      {...params}
+                      label='Cliente'
+                      helperText={errors.title && 'This field is required'}
+                    />
+                  )}
                 />
               )}
             />
+
             <CustomTextField
               select
               fullWidth

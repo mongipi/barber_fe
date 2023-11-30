@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/clienti'
+import { fetchAllClienti, deleteUser } from 'src/store/clienti'
 
 // ** Third Party Components
 import axios from 'axios'
@@ -180,7 +180,7 @@ const UserList = ({ apiData }) => {
   const store = useSelector(state => state.user)
   useEffect(() => {
     dispatch(
-      fetchData({
+      fetchAllClienti({
         q: value
       })
     )

@@ -6,6 +6,8 @@ import axios from 'axios'
 
 // ** Fetch Events
 export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async calendars => {
+  console.log(calendars)
+
   const response = await axios.get('/apps/calendar/events', {
     params: {
       calendars
@@ -17,6 +19,8 @@ export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async cal
 
 // ** Add Event
 export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch }) => {
+  console.log(event)
+
   const response = await axios.post('/apps/calendar/add-event', {
     data: {
       event

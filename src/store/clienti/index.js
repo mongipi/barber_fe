@@ -6,7 +6,7 @@ import axios from 'axios'
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 // ** Fetch Users
-export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
+export const fetchAllClienti = createAsyncThunk('appUsers/fetchData', async params => {
   const response = await axios.get(`${backendURL}/clienti`)
 
   return response
@@ -30,7 +30,7 @@ export const editCliente = createAsyncThunk('appUsers/addUser', async data => {
 export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispatch }) => {
   const response = await axios.post(`${backendURL}/clienti`, data)
 
-  dispatch(fetchData())
+  dispatch(fetchAllClienti())
 
   return response.data
 })
@@ -61,7 +61,7 @@ export const appUsersSlice = createSlice({
   },
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
+    builder.addCase(fetchAllClienti.fulfilled, (state, action) => {
       state.data = action.payload.data.data
       state.total = action.payload.data.totalItems
       state.params = action.payload.params
