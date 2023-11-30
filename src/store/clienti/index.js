@@ -12,7 +12,7 @@ export const fetchData = createAsyncThunk('appUsers/fetchData', async params => 
   return response
 })
 
-// ** Fetch Cliente
+// ** Fetch Cliente id
 export const fetchCliente = createAsyncThunk('appUsers/fetchData', async clienteId => {
   const response = await axios.get(`${backendURL}/clienti/${clienteId}`)
 
@@ -35,15 +35,21 @@ export const addUser = createAsyncThunk('appUsers/addUser', async (data, { dispa
   return response.data
 })
 
-// ** Delete User
-export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { getState, dispatch }) => {
-  const response = await axios.delete('/apps/users/delete', {
-    data: id
-  })
-  dispatch(fetchData(getState().user.params))
+// ** Delete Cliente
+export const deleteCliente = createAsyncThunk('appUsers/deleteUser', async clienteId => {
+  const response = await axios.delete(`${backendURL}/clienti/${clienteId}`)
 
-  return response.data
+  return response
 })
+
+// export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { getState, dispatch }) => {
+//   const response = await axios.delete('/apps/users/delete', {
+//     data: id
+//   })
+//   dispatch(fetchData(getState().user.params))
+
+//   return response.data
+// })
 
 export const appUsersSlice = createSlice({
   name: 'appUsers',

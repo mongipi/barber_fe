@@ -1,5 +1,9 @@
 // ** React Imports
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+
+// ** Next Import
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -12,6 +16,8 @@ import DialogActions from '@mui/material/DialogActions'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+import { deleteCliente } from 'src/store/clienti'
+
 const UserSuspendDialog = props => {
   // ** Props
   const { open, setOpen, clienteId } = props
@@ -21,11 +27,20 @@ const UserSuspendDialog = props => {
   const [secondDialogOpen, setSecondDialogOpen] = useState(false)
   const handleClose = () => setOpen(false)
   const handleSecondDialogClose = () => setSecondDialogOpen(false)
+  const dispatch = useDispatch()
+
+  // ** Hooks
+  const router = useRouter()
 
   const handleConfirmation = value => {
+    dispatch(deleteCliente(clienteId))
     handleClose()
     setUserInput(value)
     setSecondDialogOpen(true)
+
+    router.push({
+      pathname: '/clienti/list'
+    })
   }
 
   return (
