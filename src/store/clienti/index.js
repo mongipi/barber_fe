@@ -42,15 +42,6 @@ export const deleteCliente = createAsyncThunk('appUsers/deleteUser', async clien
   return response
 })
 
-// export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { getState, dispatch }) => {
-//   const response = await axios.delete('/apps/users/delete', {
-//     data: id
-//   })
-//   dispatch(fetchData(getState().user.params))
-
-//   return response.data
-// })
-
 export const appUsersSlice = createSlice({
   name: 'appUsers',
   initialState: {

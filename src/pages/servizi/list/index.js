@@ -27,14 +27,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Actions Imports
-import { fetchAllClienti, deleteCliente } from 'src/store/clienti'
+import { fetchAllServizi } from 'src/store/servizi'
 
 // ** Third Party Components
 import axios from 'axios'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/clienti/list/TableHeader'
-import AddUserDrawer from 'src/views/clienti/list/AddUserDrawer'
+import TableHeader from 'src/views/servizi/list/TableHeader'
+import AddServiziDrawer from 'src/views/servizi/list/AddServiziDrawer'
 
 // ** renders client column
 const renderClient = row => {}
@@ -55,10 +55,10 @@ const RowOptions = ({ id }) => {
     setAnchorEl(null)
   }
 
-  const handleDelete = () => {
-    dispatch(deleteCliente(id))
-    handleRowOptionsClose()
-  }
+  // const handleDelete = () => {
+  //   dispatch(deleteCliente(id))
+  //   handleRowOptionsClose()
+  // }
 
   return (
     <>
@@ -111,7 +111,7 @@ const columns = [
             <Typography
               noWrap
               component={Link}
-              href={`/clienti/view/account/${row.id}`}
+              href={`/servizi/view/account/${row.id}`}
               sx={{
                 fontWeight: 500,
                 textDecoration: 'none',
@@ -120,9 +120,6 @@ const columns = [
               }}
             >
               {row.nome}
-            </Typography>
-            <Typography noWrap variant='body2' sx={{ color: 'text.disabled' }}>
-              {row.cognome}
             </Typography>
           </Box>
         </Box>
@@ -133,12 +130,12 @@ const columns = [
     flex: 0.15,
     field: 'role',
     minWidth: 170,
-    headerName: 'Lavoro',
+    headerName: 'Prezzo',
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.lavoro}
+            {row.prezzo}
           </Typography>
         </Box>
       )
@@ -147,12 +144,12 @@ const columns = [
   {
     flex: 0.15,
     minWidth: 120,
-    headerName: 'Numero',
+    headerName: 'Durata',
     field: 'currentPlan',
     renderCell: ({ row }) => {
       return (
         <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.telefono}
+          {row.durata}
         </Typography>
       )
     }
@@ -179,12 +176,11 @@ const UserList = ({ apiData }) => {
   const dispatch = useDispatch()
   const store = useSelector(state => state.user)
   useEffect(() => {
-    dispatch(
-      fetchAllClienti({
-        q: value
-      })
-    )
-  }, [dispatch, value])
+    dispatch(fetchAllServizi())
+  }, [dispatch])
+
+  console.log('STORE')
+  console.log(store)
 
   const handleFilter = useCallback(val => {
     setValue(val)
@@ -267,8 +263,7 @@ const UserList = ({ apiData }) => {
           />
         </Card>
       </Grid>
-
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+      <AddServiziDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
     </Grid>
   )
 }

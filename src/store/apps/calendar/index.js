@@ -4,29 +4,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // ** Axios Imports
 import axios from 'axios'
 
-// ** Fetch Events
-export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async calendars => {
-  console.log(calendars)
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
-  const response = await axios.get('/apps/calendar/events', {
-    params: {
-      calendars
-    }
-  })
+// ** Fetch Events
+export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async () => {
+  const response = await axios.get(`${backendURL}/prenotazioni?allPages=true`)
 
   return response.data
 })
 
 // ** Add Event
 export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch }) => {
-  console.log(event)
-
-  const response = await axios.post('/apps/calendar/add-event', {
-    data: {
-      event
-    }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  const response = await axios.post(`${backendURL}/prenotazioni`, event)
+  await dispatch(fetchEvents())
 
   return response.data.event
 })
@@ -38,17 +28,15 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
       event
     }
   })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  await dispatch(fetchEvents())
 
   return response.data.event
 })
 
 // ** Delete Event
 export const deleteEvent = createAsyncThunk('appCalendar/deleteEvent', async (id, { dispatch }) => {
-  const response = await axios.delete('/apps/calendar/remove-event', {
-    params: { id }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  const response = await axios.delete(`${backendURL}/prenotazioni/${id}`)
+  await dispatch(fetchEvents())
 
   return response.data
 })

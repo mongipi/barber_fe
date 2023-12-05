@@ -14,6 +14,9 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 
 import { fetchAllClienti } from 'src/store/clienti'
+import { fetchAllServizi, fetchServizio } from 'src/store/servizi'
+import { format } from 'date-fns-tz'
+import { sub } from 'date-fns'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -31,14 +34,12 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 const capitalize = string => string && string[0].toUpperCase() + string.slice(1)
 
 const defaultState = {
-  url: '',
   title: '',
-  guests: [],
-  allDay: true,
+  allDay: false,
   description: '',
   endDate: new Date(),
-  calendar: 'Business',
-  startDate: new Date()
+  startDate: new Date(),
+  servizi: []
 }
 
 const AddEventSidebar = props => {
@@ -60,9 +61,10 @@ const AddEventSidebar = props => {
   const [values, setValues] = useState(defaultState)
 
   const [clientiOptions, setClientiOptions] = useState([])
+  const [serviziOptions, setserviziOptions] = useState([])
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchClienti = async () => {
       try {
         const clientiData = await dispatch(fetchAllClienti({}))
         setClientiOptions(clientiData.payload.data.data)
@@ -71,7 +73,21 @@ const AddEventSidebar = props => {
       }
     }
 
-    fetchData()
+    fetchClienti()
+  }, [dispatch])
+
+  useEffect(() => {
+    const fetchServizi = async () => {
+      try {
+        const serviziData = await dispatch(fetchAllServizi({}))
+
+        setserviziOptions(serviziData.payload.data)
+      } catch (error) {
+        console.error('Errore durante il recupero dei servizi:', error.message)
+      }
+    }
+
+    fetchServizi()
   }, [dispatch])
 
   const {
@@ -91,19 +107,18 @@ const AddEventSidebar = props => {
 
   const onSubmit = data => {
     const modifiedEvent = {
-      url: values.url,
       display: 'block',
       title: data.title,
-      end: values.endDate,
+      end: format(new Date(values.endDate), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", { timeZone: 'Europe/Rome' }),
       allDay: values.allDay,
-      start: values.startDate,
+      start: format(new Date(values.startDate), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", { timeZone: 'Europe/Rome' }),
       extendedProps: {
-        calendar: capitalize(values.calendar),
-        guests: values.guests && values.guests.length ? values.guests : undefined,
+        servizi: values.servizi && values.servizi.length ? values.servizi : undefined,
         description: values.description.length ? values.description : undefined
       }
     }
     if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
+      console.log(modifiedEvent)
       dispatch(addEvent(modifiedEvent))
     } else {
       dispatch(updateEvent({ id: store.selectedEvent.id, ...modifiedEvent }))
@@ -132,14 +147,12 @@ const AddEventSidebar = props => {
       const event = store.selectedEvent
       setValue('title', event.title || '')
       setValues({
-        url: event.url || '',
         title: event.title || '',
         allDay: event.allDay,
-        guests: event.extendedProps.guests || [],
+        servizi: event.extendedProps.servizi || [],
         description: event.extendedProps.description || '',
-        calendar: event.extendedProps.calendar || 'Business',
-        endDate: event.end !== null ? event.end : event.start,
-        startDate: event.start !== null ? event.start : new Date()
+        endDate: event.end !== null ? sub(event.end, { hours: 1 }) : event.start,
+        startDate: event.start !== null ? sub(event.start, { hours: 1 }) : new Date()
       })
     }
   }, [setValue, store.selectedEvent])
@@ -174,7 +187,7 @@ const AddEventSidebar = props => {
       return (
         <Fragment>
           <Button type='submit' variant='contained' sx={{ mr: 4 }}>
-            Add
+            Aggiungi
           </Button>
           <Button variant='tonal' color='secondary' onClick={resetToEmptyValues}>
             Reset
@@ -185,7 +198,7 @@ const AddEventSidebar = props => {
       return (
         <Fragment>
           <Button type='submit' variant='contained' sx={{ mr: 4 }}>
-            Update
+            Modifica aspitt ci non funzion
           </Button>
           <Button variant='tonal' color='secondary' onClick={resetToStoredValues}>
             Reset
@@ -274,28 +287,38 @@ const AddEventSidebar = props => {
             <CustomTextField
               select
               fullWidth
+              label='Servizi'
               sx={{ mb: 4 }}
-              label='Calendar'
               SelectProps={{
-                value: values.calendar,
-                onChange: e => setValues({ ...values, calendar: e.target.value })
+                multiple: true,
+                value: values.servizi.map(servizio => servizio.id),
+                onChange: e => {
+                  const selectedServizi = serviziOptions.filter(servizio => e.target.value.includes(servizio.id))
+                  const newEndDate = calculateEndDate(values.startDate, selectedServizi)
+                  setValues({
+                    ...values,
+                    servizi: selectedServizi,
+                    endDate: newEndDate
+                  })
+                }
               }}
             >
-              <MenuItem value='Personal'>Personal</MenuItem>
-              <MenuItem value='Business'>Business</MenuItem>
-              <MenuItem value='Family'>Family</MenuItem>
-              <MenuItem value='Holiday'>Holiday</MenuItem>
-              <MenuItem value='ETC'>ETC</MenuItem>
+              {serviziOptions.map(servizio => (
+                <MenuItem key={servizio.id} value={servizio.id}>
+                  {servizio.nome}
+                </MenuItem>
+              ))}
             </CustomTextField>
             <Box sx={{ mb: 4 }}>
               <DatePicker
                 selectsStart
                 id='event-start-date'
+                timeIntervals={10}
                 endDate={values.endDate}
                 selected={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
+                dateFormat={!values.allDay ? 'hh:mm dd-MM-yyyy' : 'dd-MM-yyyy'}
                 customInput={<PickersComponent label='Start Date' registername='startDate' />}
                 onChange={date => setValues({ ...values, startDate: new Date(date) })}
                 onSelect={handleStartDate}
@@ -304,15 +327,18 @@ const AddEventSidebar = props => {
             <Box sx={{ mb: 4 }}>
               <DatePicker
                 selectsEnd
+                timeIntervals={10}
                 id='event-end-date'
                 endDate={values.endDate}
                 selected={values.endDate}
                 minDate={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
+                dateFormat={!values.allDay ? 'hh:mm dd-MM-yyyy' : 'dd-MM-yyyy'}
                 customInput={<PickersComponent label='End Date' registername='endDate' />}
-                onChange={date => setValues({ ...values, endDate: new Date(date) })}
+                onChange={date => {
+                  setValues({ ...values, endDate: date })
+                }}
               />
             </Box>
             <FormControl sx={{ mb: 4 }}>
@@ -324,39 +350,11 @@ const AddEventSidebar = props => {
               />
             </FormControl>
             <CustomTextField
-              fullWidth
-              type='url'
-              id='event-url'
-              sx={{ mb: 4 }}
-              label='Event URL'
-              value={values.url}
-              placeholder='https://www.google.com'
-              onChange={e => setValues({ ...values, url: e.target.value })}
-            />
-
-            <CustomTextField
-              select
-              fullWidth
-              label='Guests'
-              sx={{ mb: 4 }}
-              SelectProps={{
-                multiple: true,
-                value: values.guests,
-                onChange: e => setValues({ ...values, guests: e.target.value })
-              }}
-            >
-              <MenuItem value='bruce'>Bruce</MenuItem>
-              <MenuItem value='clark'>Clark</MenuItem>
-              <MenuItem value='diana'>Diana</MenuItem>
-              <MenuItem value='john'>John</MenuItem>
-              <MenuItem value='barry'>Barry</MenuItem>
-            </CustomTextField>
-            <CustomTextField
               rows={4}
               multiline
               fullWidth
               sx={{ mb: 6.5 }}
-              label='Description'
+              label='Descrizione'
               id='event-description'
               value={values.description}
               onChange={e => setValues({ ...values, description: e.target.value })}
@@ -369,6 +367,18 @@ const AddEventSidebar = props => {
       </Box>
     </Drawer>
   )
+}
+
+const calculateEndDate = (date, servizi) => {
+  let totalDuration = servizi.reduce((acc, servizo) => {
+    return acc + Number(servizo.durata)
+  }, 0)
+
+  const totalDurationInMilliseconds = totalDuration * 60 * 1000
+
+  const newEndDate = new Date(date.getTime() + totalDurationInMilliseconds)
+
+  return newEndDate
 }
 
 export default AddEventSidebar

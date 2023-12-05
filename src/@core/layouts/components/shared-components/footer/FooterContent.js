@@ -28,35 +28,15 @@ const FooterContent = () => {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography sx={{ mr: 2, display: 'flex', color: 'text.secondary' }}>
-        {`© ${new Date().getFullYear()}, Made with `}
+        {`© ${new Date().getFullYear()}`}
         <Box component='span' sx={{ mx: 1, color: 'error.main' }}>
-          ❤️
+          🍕
         </Box>
         {`by`}
-        <Typography sx={{ ml: 1 }} target='_blank' href='https://pixinvent.com' component={StyledCompanyName}>
-          Pixinvent
+        <Typography sx={{ ml: 1 }} target='_blank' href='#' component={StyledCompanyName}>
+          Pietro
         </Typography>
       </Typography>
-      {hidden ? null : (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-          <Typography target='_blank' component={LinkStyled} href='https://themeforest.net/licenses/standard'>
-            License
-          </Typography>
-          <Typography target='_blank' component={LinkStyled} href='https://1.envato.market/pixinvent_portfolio'>
-            More Themes
-          </Typography>
-          <Typography
-            target='_blank'
-            component={LinkStyled}
-            href='https://demos.pixinvent.com/vuexy-nextjs-admin-template/documentation'
-          >
-            Documentation
-          </Typography>
-          <Typography target='_blank' component={LinkStyled} href='https://pixinvent.ticksy.com'>
-            Support
-          </Typography>
-        </Box>
-      )}
     </Box>
   )
 }

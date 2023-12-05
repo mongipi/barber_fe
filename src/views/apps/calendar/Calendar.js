@@ -9,18 +9,22 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
 
+import moment from 'moment-timezone'
+import 'moment-timezone'
+import momentTimezonePlugin from '@fullcalendar/moment-timezone'
+
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import { format } from 'date-fns-tz'
 
 const blankEvent = {
   title: '',
   start: '',
   end: '',
   allDay: false,
-  url: '',
   extendedProps: {
-    calendar: '',
-    guests: [],
+    servizi: [],
     location: '',
     description: ''
   }
@@ -52,9 +56,12 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.events.length ? store.events : [],
+      slotDuration: '00:10',
+      locale: 'it',
+      timeZone: 'Europe/Rome',
+      events: store.events.data ? store.events.data : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
-      initialView: 'dayGridMonth',
+      initialView: 'timeGridDay',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
         end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
@@ -124,7 +131,7 @@ const Calendar = props => {
         const ev = { ...blankEvent }
         ev.start = info.date
         ev.end = info.date
-        ev.allDay = true
+        ev.allDay = false
 
         // @ts-ignore
         dispatch(handleSelectEvent(ev))

@@ -59,6 +59,8 @@ const AppCalendar = () => {
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
 
+  console.log(store.events.data)
+
   return (
     <CalendarWrapper
       className='app-calendar'
