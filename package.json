@@ -2,7 +2,7 @@
   "name": "vuexy-nextjs-admin-template",
   "version": "1.2.0",
   "private": true,
-  "proxy": "http://18.159.61.62:9990/api",
+  //"proxy": "http://18.159.61.62:9990/api",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
